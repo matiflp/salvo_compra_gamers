@@ -1,6 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
+using Salvo.Models;
 using Salvo.Repositories;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -25,7 +28,22 @@ namespace Salvo.Controllers
         {
             try
             {
-                var games = _repository.GetAllGames();
+                var games = _repository.GetAllGamesWithPlayers()
+                    .Select(game =>  new GameDTO
+                    {
+                            Id = game.Id,
+                            CreationDate = game.CreationDate,
+                            GamePlayers = game.GamePlayers.Select(gameplayer => new GamePlayerDTO
+                            {
+                                Id = gameplayer.Id,
+                                JoinDate = gameplayer.JoinDate,
+                                Player = new PlayerDTO
+                                {
+                                    Id = gameplayer.PlayerId,
+                                    Email = gameplayer.Player.Email
+                                }
+                            }).ToList()
+                    }).ToList();
                 return Ok(games);
             }
             catch (Exception ex)
