@@ -29,7 +29,7 @@ namespace Salvo.Repositories
                 queryable = includes(queryable);
             }
 
-            return queryable.AsNoTracking();
+            return queryable.AsNoTrackingWithIdentityResolution();
         }
         public IQueryable<T> FindByCondition(Expression<Func<T, bool>> expression)
         {

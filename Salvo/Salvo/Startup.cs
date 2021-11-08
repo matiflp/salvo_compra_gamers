@@ -32,6 +32,9 @@ namespace Salvo
 
             // Inyectar repositorio de game
             services.AddScoped<IGameRepository, GameRepository>();
+
+            // Inyectar repositorio de game players
+            services.AddScoped<IGamePlayerRepository, GamePlayerRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
