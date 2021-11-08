@@ -15,11 +15,14 @@ namespace Salvo.Repositories
 
         GamePlayer IGamePlayerRepository.GetGamePlayerView(int idGamePlayer)
         {
-            return FindAll(source => source.Include(gamePlayer => gamePlayer.Ships)
-            .ThenInclude(ship => ship.Locations)
-            .Include(gamePlayer => gamePlayer.Game)
-            .ThenInclude(game => game.GamePlayers)
-            .ThenInclude(gp => gp.Player))
+            return FindAll(
+                source => source
+                .Include(gamePlayer => gamePlayer.Ships)
+                    .ThenInclude(ship => ship.Locations)
+                .Include(gamePlayer => gamePlayer.Game)
+                    .ThenInclude(game => game.GamePlayers)
+                        .ThenInclude(gp => gp.Player)
+                )
                 .Where(gamePlayer => gamePlayer.Id == idGamePlayer)
                 .OrderBy(game => game.JoinDate)
                 .FirstOrDefault();

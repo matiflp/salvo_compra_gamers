@@ -29,9 +29,9 @@ namespace Salvo.Controllers
             try
             {
                 var gp = _repository.GetGamePlayerView(id);
-                var gpDTO = new GameViewDTO
+                var gameView = new GameViewDTO
                 {
-                    Id = gp.Game.Id,
+                    Id = gp.Id,
                     CreationDate = gp.Game.CreationDate,
                     GamePlayers = gp.Game.GamePlayers.Select(gameplayer => new GamePlayerDTO
                     {
@@ -54,7 +54,7 @@ namespace Salvo.Controllers
                         }).ToList()
                     }).ToList()
                 };
-                return Ok(gpDTO);
+                return Ok(gameView);
             }
             catch (Exception ex)
             {
