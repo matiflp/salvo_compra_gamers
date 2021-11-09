@@ -43,16 +43,31 @@ namespace Salvo.Controllers
                             Email = gameplayer.Player.Email
                         }
                     }).ToList(),
-                    Ships = gp.Ships.Select(ships => new ShipDTO 
+                    Ships = gp.Ships.Select(ships => new ShipDTO
                     {
                         Id = ships.Id,
                         Type = ships.Type,
-                        Locations = ships.Locations.Select(locations => new ShipLocationDTO 
-                        { 
+                        Locations = ships.Locations.Select(locations => new ShipLocationDTO
+                        {
                             Id = locations.Id,
                             Location = locations.Location
                         }).ToList()
-                    }).ToList()
+                    }).ToList(),
+                    Salvos = gp.Game.GamePlayers.SelectMany(gameplayersalvo => gameplayersalvo.Salvos.Select(salvo => new SalvoDTO
+                    {
+                        Id = salvo.Id,
+                        Turn = salvo.Turn,
+                        Player = new PlayerDTO
+                        {
+                            Id = gameplayersalvo.Player.Id,
+                            Email = gameplayersalvo.Player.Email
+                        },
+                        Locations = salvo.Locations.Select(salvoLocation => new SalvoLocationDTO
+                        {
+                            Id = salvoLocation.Id,
+                            Location = salvoLocation.Location
+                        }).ToList()
+                    })).ToList()
                 };
                 return Ok(gameView);
             }
@@ -61,7 +76,5 @@ namespace Salvo.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
-
-     
     }
 }

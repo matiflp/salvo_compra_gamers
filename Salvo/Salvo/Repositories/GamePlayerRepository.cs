@@ -13,16 +13,24 @@ namespace Salvo.Repositories
         {
         }
 
-        GamePlayer IGamePlayerRepository.GetGamePlayerView(int idGamePlayer)
+        public GamePlayer GetGamePlayerView(int idGamePlayer)
         {
-            return FindAll(
-                source => source
-                .Include(gamePlayer => gamePlayer.Ships)
-                    .ThenInclude(ship => ship.Locations)
-                .Include(gamePlayer => gamePlayer.Game)
-                    .ThenInclude(game => game.GamePlayers)
-                        .ThenInclude(gp => gp.Player)
-                )
+            return FindAll(source => source.Include(gamePlayer => gamePlayer.Ships)
+                                                .ThenInclude(ship => ship.Locations)
+                                            .Include(gamePlayer => gamePlayer.Salvos)
+                                                .ThenInclude(salvo => salvo.Locations)
+                                            .Include(gamePlayer => gamePlayer.Game)
+                                                .ThenInclude(game => game.GamePlayers)
+                                                    .ThenInclude(gp => gp.Player)
+                                            .Include(gamePlayer => gamePlayer.Game)
+                                                .ThenInclude(game => game.GamePlayers)
+                                                    .ThenInclude(gp => gp.Salvos)
+                                                    .ThenInclude(salvo => salvo.Locations)
+                                            .Include(gamePlayer => gamePlayer.Game)
+                                                .ThenInclude(game => game.GamePlayers)
+                                                    .ThenInclude(gp => gp.Ships)
+                                                    .ThenInclude(ship => ship.Locations)
+                                            )
                 .Where(gamePlayer => gamePlayer.Id == idGamePlayer)
                 .OrderBy(game => game.JoinDate)
                 .FirstOrDefault();

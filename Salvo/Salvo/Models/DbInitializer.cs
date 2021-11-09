@@ -437,6 +437,271 @@ namespace Salvo.Models
                 context.SaveChanges();
             }
             #endregion
+
+            #region Salvos
+            if (!context.Salvos.Any())
+            {
+                GamePlayer gamePlayer1 = context.GamePlayers.Find(1L);
+                GamePlayer gamePlayer2 = context.GamePlayers.Find(2L);
+                GamePlayer gamePlayer3 = context.GamePlayers.Find(3L);
+                GamePlayer gamePlayer4 = context.GamePlayers.Find(4L);
+                GamePlayer gamePlayer5 = context.GamePlayers.Find(5L);
+                GamePlayer gamePlayer6 = context.GamePlayers.Find(6L);
+                GamePlayer gamePlayer7 = context.GamePlayers.Find(7L);
+                GamePlayer gamePlayer8 = context.GamePlayers.Find(8L);
+                GamePlayer gamePlayer9 = context.GamePlayers.Find(9L);
+                GamePlayer gamePlayer10 = context.GamePlayers.Find(10L);
+
+                var salvos = new Salvo[]
+                {
+                    //Game = 1 ; Turn = 1
+                    new Salvo
+                    {
+                        Turn = 1,
+                        Gameplayer = gamePlayer1,
+                        Locations = new SalvoLocation[]
+                        {
+                            new SalvoLocation{Location = "B5"},
+                            new SalvoLocation{Location = "C5"},
+                            new SalvoLocation{Location = "F1"}
+                        }
+                    },
+                    new Salvo
+                    {
+                        Turn = 1,
+                        Gameplayer = gamePlayer2,
+                        Locations = new SalvoLocation[]
+                        {
+                            new SalvoLocation{Location = "B4"},
+                            new SalvoLocation{Location = "B5"},
+                            new SalvoLocation{Location = "B6"}
+                        }
+                    },
+                    //Game = 1 ; Turn = 2
+                    new Salvo
+                    {
+                        Turn = 2,
+                        Gameplayer = gamePlayer1,
+                        Locations = new SalvoLocation[]
+                        {
+                            new SalvoLocation{Location = "F2"},
+                            new SalvoLocation{Location = "D5"},
+                        }
+                    },
+                    new Salvo
+                    {
+                        Turn = 2,
+                        Gameplayer = gamePlayer2,
+                        Locations = new SalvoLocation[]
+                        {
+                            new SalvoLocation{Location = "E1"},
+                            new SalvoLocation{Location = "H3"},
+                            new SalvoLocation{Location = "A2"}
+                        }
+                    },
+                    //Game = 2 ; Turn = 1
+                    new Salvo
+                    {
+                        Turn = 1,
+                        Gameplayer = gamePlayer3,
+                        Locations = new SalvoLocation[]
+                        {
+                            new SalvoLocation{Location = "A2"},
+                            new SalvoLocation{Location = "A4"},
+                            new SalvoLocation{Location = "G6"}
+                        }
+                    },
+                    new Salvo
+                    {
+                        Turn = 1,
+                        Gameplayer = gamePlayer4,
+                        Locations = new SalvoLocation[]
+                        {
+                            new SalvoLocation{Location = "B5"},
+                            new SalvoLocation{Location = "D5"},
+                            new SalvoLocation{Location = "C7"}
+                        }
+                    },
+                    //Game = 2 ; Turn = 2
+                    new Salvo
+                    {
+                        Turn = 2,
+                        Gameplayer = gamePlayer3,
+                        Locations = new SalvoLocation[]
+                        {
+                            new SalvoLocation{Location = "A3"},
+                            new SalvoLocation{Location = "H6"}
+                        }
+                    },
+                    new Salvo
+                    {
+                        Turn = 2,
+                        Gameplayer = gamePlayer4,
+                        Locations = new SalvoLocation[]
+                        {
+                            new SalvoLocation{Location = "C5"},
+                            new SalvoLocation{Location = "C6"}
+                        }
+                    },
+                    //Game = 3 ; Turn = 1
+                    new Salvo
+                    {
+                        Turn = 1,
+                        Gameplayer = gamePlayer5,
+                        Locations = new SalvoLocation[]
+                        {
+                            new SalvoLocation{Location = "G6"},
+                            new SalvoLocation{Location = "H6"},
+                            new SalvoLocation{Location = "A4"}
+                        }
+                    },
+                    new Salvo
+                    {
+                        Turn = 1,
+                        Gameplayer = gamePlayer6,
+                        Locations = new SalvoLocation[]
+                        {
+                            new SalvoLocation{Location = "H1"},
+                            new SalvoLocation{Location = "H2"},
+                            new SalvoLocation{Location = "H3"}
+                        }
+                    },
+                    //Game = 3 ; Turn = 2
+                    new Salvo
+                    {
+                        Turn = 2,
+                        Gameplayer = gamePlayer5,
+                        Locations = new SalvoLocation[]
+                        {
+                            new SalvoLocation{Location = "A2"},
+                            new SalvoLocation{Location = "A3"},
+                            new SalvoLocation{Location = "D8"}
+                        }
+                    },
+                    new Salvo
+                    {
+                        Turn = 2,
+                        Gameplayer = gamePlayer6,
+                        Locations = new SalvoLocation[]
+                        {
+                            new SalvoLocation{Location = "E1"},
+                            new SalvoLocation{Location = "F2"},
+                            new SalvoLocation{Location = "G3"},
+                        }
+                    },
+                    //Game = 4 ; Turn = 1
+                    new Salvo
+                    {
+                        Turn = 1,
+                        Gameplayer = gamePlayer7,
+                        Locations = new SalvoLocation[]
+                        {
+                            new SalvoLocation{Location = "A3"},
+                            new SalvoLocation{Location = "A4"},
+                            new SalvoLocation{Location = "F7"}
+                        }
+                    },
+                    new Salvo
+                    {
+                        Turn = 1,
+                        Gameplayer = gamePlayer8,
+                        Locations = new SalvoLocation[]
+                        {
+                            new SalvoLocation{Location = "B5"},
+                            new SalvoLocation{Location = "C6"},
+                            new SalvoLocation{Location = "H1"},
+                        }
+                    },
+                    //Game = 4 ; Turn = 2
+                    new Salvo
+                    {
+                        Turn = 2,
+                        Gameplayer = gamePlayer7,
+                        Locations = new SalvoLocation[]
+                        {
+                            new SalvoLocation{Location = "A2"},
+                            new SalvoLocation{Location = "G6"},
+                            new SalvoLocation{Location = "H6"}
+                        }
+                    },
+                    new Salvo
+                    {
+                        Turn = 2,
+                        Gameplayer = gamePlayer8,
+                        Locations = new SalvoLocation[]
+                        {
+                            new SalvoLocation{Location = "C5"},
+                            new SalvoLocation{Location = "C7"},
+                            new SalvoLocation{Location = "D5"},
+                        }
+                    },
+                    //Game = 5 ; Turn = 1
+                    new Salvo
+                    {
+                        Turn = 2,
+                        Gameplayer = gamePlayer9,
+                        Locations = new SalvoLocation[]
+                        {
+                            new SalvoLocation{Location = "A1"},
+                            new SalvoLocation{Location = "A2"},
+                            new SalvoLocation{Location = "A3"}
+                        }
+                    },
+                    new Salvo
+                    {
+                        Turn = 2,
+                        Gameplayer = gamePlayer10,
+                        Locations = new SalvoLocation[]
+                        {
+                            new SalvoLocation{Location = "B5"},
+                            new SalvoLocation{Location = "B6"},
+                            new SalvoLocation{Location = "C7"},
+                        }
+                    },
+                    //Game = 5 ; Turn = 2
+                    new Salvo
+                    {
+                        Turn = 2,
+                        Gameplayer = gamePlayer9,
+                        Locations = new SalvoLocation[]
+                        {
+                            new SalvoLocation{Location = "G6"},
+                            new SalvoLocation{Location = "G7"},
+                            new SalvoLocation{Location = "G8"}
+                        }
+                    },
+                    new Salvo
+                    {
+                        Turn = 2,
+                        Gameplayer = gamePlayer10,
+                        Locations = new SalvoLocation[]
+                        {
+                            new SalvoLocation{Location = "C6"},
+                            new SalvoLocation{Location = "D6"},
+                            new SalvoLocation{Location = "E6"},
+                        }
+                    },
+                    //Game = 5 ; Turn = 3
+                    new Salvo
+                    {
+                        Turn = 3,
+                        Gameplayer = gamePlayer10,
+                        Locations = new SalvoLocation[]
+                        {
+                            new SalvoLocation{Location = "H1"},
+                            new SalvoLocation{Location = "H8"},
+                        }
+                    }
+                };
+
+                foreach (Salvo salvo in salvos)
+                {
+                    context.Salvos.Add(salvo);
+                }
+
+                context.SaveChanges();
+            }
+            #endregion
         }
     }
 }
