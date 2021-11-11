@@ -29,20 +29,21 @@ namespace Salvo.Controllers
             try
             {
                 var games = _repository.GetAllGamesWithPlayers()
-                    .Select(game =>  new GameDTO
+                    .Select(game => new GameDTO
                     {
-                            Id = game.Id,
-                            CreationDate = game.CreationDate,
-                            GamePlayers = game.GamePlayers.Select(gameplayer => new GamePlayerDTO
+                        Id = game.Id,
+                        CreationDate = game.CreationDate,
+                        GamePlayers = game.GamePlayers.Select(gameplayer => new GamePlayerDTO
+                        {
+                            Id = gameplayer.Id,
+                            JoinDate = gameplayer.JoinDate,
+                            Player = new PlayerDTO
                             {
-                                Id = gameplayer.Id,
-                                JoinDate = gameplayer.JoinDate,
-                                Player = new PlayerDTO
-                                {
-                                    Id = gameplayer.PlayerId,
-                                    Email = gameplayer.Player.Email
-                                }
-                            }).ToList()
+                                Id = gameplayer.PlayerId,
+                                Email = gameplayer.Player.Email
+                            },
+                            Point = gameplayer.GetScore() != null ? gameplayer.GetScore().Point : 0
+                        }).ToList()
                     }).ToList();
                 return Ok(games);
             }
