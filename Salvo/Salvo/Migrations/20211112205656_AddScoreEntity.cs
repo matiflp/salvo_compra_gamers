@@ -13,8 +13,8 @@ namespace Salvo.Migrations
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Point = table.Column<double>(type: "float", nullable: true),
-                    FinishDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Point = table.Column<double>(type: "float", nullable: false),
+                    FinishDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     GameId = table.Column<long>(type: "bigint", nullable: false),
                     PlayerId = table.Column<long>(type: "bigint", nullable: false)
                 },

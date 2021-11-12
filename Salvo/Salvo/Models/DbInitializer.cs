@@ -706,25 +706,61 @@ namespace Salvo.Models
             #region Scores
             if (!context.Scores.Any()) 
             {
-                var Scores = new Score[]
+                Game game1 = context.Games.Find(1L);
+                Game game2 = context.Games.Find(2L);
+                Game game3 = context.Games.Find(3L);
+                Game game4 = context.Games.Find(4L);
+
+
+                Player jbauer = context.Players.Find(1L);
+                Player obrian = context.Players.Find(2L);
+                Player almeida = context.Players.Find(4L);
+
+                var scores = new Score[]
                 {
-                    new Score{ Game = context.Games.Find(1L), FinishDate = DateTime.Now, Player = context.Players.Find(1L), Point = 1.0}, //1
-                    new Score{ Game = context.Games.Find(1L), FinishDate = DateTime.Now, Player = context.Players.Find(2L), Point = 0.0}, //2
-                    new Score{ Game = context.Games.Find(2L), FinishDate = DateTime.Now, Player = context.Players.Find(1L), Point = 0.5}, //3
-                    new Score{ Game = context.Games.Find(2L), FinishDate = DateTime.Now, Player = context.Players.Find(2L), Point = 0.5}, //4
-                    new Score{ Game = context.Games.Find(3L), FinishDate = DateTime.Now, Player = context.Players.Find(2L), Point = 1.0}, //5
-                    new Score{ Game = context.Games.Find(3L), FinishDate = DateTime.Now, Player = context.Players.Find(4L), Point = 0.0}, //6
-                    new Score{ Game = context.Games.Find(4L), FinishDate = DateTime.Now, Player = context.Players.Find(2L), Point = 0.5}, //7
-                    new Score{ Game = context.Games.Find(4L), FinishDate = DateTime.Now, Player = context.Players.Find(1L), Point = 0.5}, //8
-                    new Score{ Game = context.Games.Find(5L), FinishDate = DateTime.Now, Player = context.Players.Find(4L)}, //9
-                    new Score{ Game = context.Games.Find(5L), FinishDate = DateTime.Now, Player = context.Players.Find(1L)}, //10
-                    new Score{ Game = context.Games.Find(6L), FinishDate = DateTime.Now, Player = context.Players.Find(3L)}, //11
-                    new Score{ Game = context.Games.Find(7L), FinishDate = DateTime.Now, Player = context.Players.Find(4L)}, //12
-                    new Score{ Game = context.Games.Find(8L), FinishDate = DateTime.Now, Player = context.Players.Find(3L)}, //13
-                    new Score{ Game = context.Games.Find(8L), FinishDate = DateTime.Now, Player = context.Players.Find(4L)}, //14
+                    //game 1
+                    new Score{ Game = game1, Player = jbauer, FinishDate = DateTime.Now, Point = 1 },
+                    new Score{ Game = game1, Player = obrian, FinishDate = DateTime.Now, Point = 0 },
+
+                    //game 2
+                    new Score{ Game = game2, Player = jbauer, FinishDate = DateTime.Now.AddMinutes(1), Point = 0.5 },
+                    new Score{ Game = game2, Player = obrian, FinishDate = DateTime.Now.AddMinutes(1), Point = 0.5 },
+
+                    //obrian gp5
+                    new Score {
+                        Game = game3,
+                        Player = obrian,
+                        FinishDate = DateTime.Now.AddMinutes(2),
+                        Point = 0
+                    },
+
+                    //almeida gp6
+                    new Score {
+                        Game = game3,
+                        Player = almeida,
+                        FinishDate = DateTime.Now.AddMinutes(2),
+                        Point = 1
+                    },
+
+                    //obrian gp7
+                    new Score {
+                        Game = game4,
+                        Player = obrian,
+                        FinishDate = DateTime.Now.AddMinutes(3),
+                        Point = 0.5
+                    },
+
+                    //jbauer gp8
+                    new Score {
+                        Game = game4,
+                        Player = jbauer,
+                        FinishDate = DateTime.Now.AddMinutes(3),
+                        Point = 0.5
+                    },
                 };
+
                 // recorremos los Scores y los añadimos al contexto
-                foreach (Score score in Scores)
+                foreach (Score score in scores)
                 {
                     context.Scores.Add(score);
                 }

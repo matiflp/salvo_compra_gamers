@@ -8,7 +8,7 @@ namespace Salvo.Models
     public class Score
     {
         public long Id { get; set; }
-        public double? Point { get; set; }
+        public double Point { get; set; }
         public DateTime? FinishDate { get; set; }
 
         public long GameId { get; set; }

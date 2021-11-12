@@ -42,7 +42,7 @@ namespace Salvo.Controllers
                                 Id = gameplayer.PlayerId,
                                 Email = gameplayer.Player.Email
                             },
-                            Point = gameplayer.GetScore() != null ? gameplayer.GetScore().Point : 0
+                            Point = gameplayer.GetScore() != null ? (double?) gameplayer.GetScore().Point : null
                         }).ToList()
                     }).ToList();
                 return Ok(games);
