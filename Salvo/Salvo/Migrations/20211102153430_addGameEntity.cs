@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Salvo.Migrations
 {
-    public partial class AddGameEntity : Migration
+    public partial class addGameEntity : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

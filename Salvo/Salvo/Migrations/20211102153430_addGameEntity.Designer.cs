@@ -11,7 +11,7 @@ namespace Salvo.Migrations
 {
     [DbContext(typeof(SalvoContext))]
     [Migration("20211102153430_addGameEntity")]
-    partial class AddGameEntity
+    partial class addGameEntity
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
