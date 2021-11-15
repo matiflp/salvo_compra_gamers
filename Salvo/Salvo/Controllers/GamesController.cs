@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Salvo.Models;
 using Salvo.Repositories;
@@ -14,6 +15,7 @@ namespace Salvo.Controllers
 {
     [Route("api/games")]
     [ApiController]
+    [Authorize]
     public class GamesController : ControllerBase
     {
         private IGameRepository _repository;
@@ -24,11 +26,15 @@ namespace Salvo.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public IActionResult Get()
         {
             try
             {
-                var games = _repository.GetAllGamesWithPlayers()
+                GameListDTO gameList = new GameListDTO
+                {
+                    Email = User.FindFirst("Player") != null ? User.FindFirst("Player").Value : "Guest",
+                    Games = _repository.GetAllGamesWithPlayers()
                     .Select(game => new GameDTO
                     {
                         Id = game.Id,
@@ -42,10 +48,11 @@ namespace Salvo.Controllers
                                 Id = gameplayer.PlayerId,
                                 Email = gameplayer.Player.Email
                             },
-                            Point = gameplayer.GetScore() != null ? (double?) gameplayer.GetScore().Point : null
+                            Point = gameplayer.GetScore() != null ? (double?)gameplayer.GetScore().Point : null
                         }).ToList()
-                    }).ToList();
-                return Ok(games);
+                    }).ToList()
+                };
+                return Ok(gameList);
             }
             catch (Exception ex)
             {
