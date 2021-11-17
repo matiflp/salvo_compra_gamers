@@ -43,7 +43,7 @@ namespace Salvo.Controllers
                         "al menos una minúscula y al menos una mayúscula.");
 
                 // Validamos que el mail ingresado sea valido
-                if (!Regex.IsMatch(player.Password, "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*$"))
+                if (!Regex.IsMatch(player.Email, "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*$"))
                     return StatusCode(403, "El email ingresado no es válido");
 
                 // De ser válido obtenemos el mail y verificamos que no este en uso
