@@ -35,5 +35,11 @@ namespace Salvo.Repositories
                 .OrderBy(game => game.JoinDate)
                 .FirstOrDefault();
         }
+
+        public void Save(GamePlayer gameplayer)
+        {
+            Create(gameplayer);
+            SaveChanges();
+        }
     }
 }

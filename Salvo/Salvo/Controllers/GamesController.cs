@@ -19,10 +19,16 @@ namespace Salvo.Controllers
     public class GamesController : ControllerBase
     {
         private IGameRepository _repository;
+        private IPlayerRepository _playerRepository;
+        private IGamePlayerRepository _gamePlayerRepository;
 
-        public GamesController(IGameRepository repository)
+        public GamesController(IGameRepository repository, 
+            IPlayerRepository playerRepository, 
+            IGamePlayerRepository gamePlayerRepository)
         {
             _repository = repository;
+            _playerRepository = playerRepository;
+            _gamePlayerRepository = gamePlayerRepository;
         }
 
         [HttpGet]
@@ -59,5 +65,36 @@ namespace Salvo.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+
+        [HttpPost]
+        public IActionResult Post()
+        {
+            try
+            {
+                string email = User.FindFirst("Player") != null ? User.FindFirst("Player").Value : "Guest";
+
+                // Vamos a buscar al jugador autenticado
+                Player player = _playerRepository.FindByEmail(email);
+                DateTime fechaActual = DateTime.Now;
+                GamePlayer gamePlayer = new GamePlayer
+                {
+                    Game = new Game
+                    {
+                        CreationDate = fechaActual
+                    },
+                    PlayerId = player.Id,
+                    JoinDate = fechaActual
+                };
+                // Guardar el gamePlayer
+                _gamePlayerRepository.Save(gamePlayer);
+
+                return StatusCode(201, gamePlayer.Id);
+            }
+            catch(Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
     }
 }
