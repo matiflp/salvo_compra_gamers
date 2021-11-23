@@ -36,10 +36,21 @@ namespace Salvo.Repositories
                 .FirstOrDefault();
         }
 
-        public void Save(GamePlayer gameplayer)
+        public void Save(GamePlayer gamePlayer)
         {
-            Create(gameplayer);
+            if (gamePlayer.Id == 0)
+                Create(gamePlayer);
+            else
+                Update(gamePlayer);
             SaveChanges();
+        }
+
+        public GamePlayer FindById(long Id)
+        {
+            return FindByCondition(gamePlayer => gamePlayer.Id == Id)
+                .Include(gamePlayer => gamePlayer.Player)
+                .Include(gamaPlayer => gamaPlayer.Ships)
+                .FirstOrDefault();       
         }
     }
 }

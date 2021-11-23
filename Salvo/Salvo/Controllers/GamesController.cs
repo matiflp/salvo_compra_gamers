@@ -71,6 +71,7 @@ namespace Salvo.Controllers
         {
             try
             {
+                // Obtención del usuario autenticado
                 string email = User.FindFirst("Player") != null ? User.FindFirst("Player").Value : "Guest";
 
                 // Vamos a buscar al jugador autenticado
@@ -85,6 +86,7 @@ namespace Salvo.Controllers
                     PlayerId = player.Id,
                     JoinDate = fechaActual
                 };
+
                 // Guardar el gamePlayer
                 _gamePlayerRepository.Save(gamePlayer);
 
