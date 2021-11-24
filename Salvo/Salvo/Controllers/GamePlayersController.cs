@@ -18,10 +18,12 @@ namespace Salvo.Controllers
     {
 
         private IGamePlayerRepository _repository;
+        private IPlayerRepository _playerRepository;
 
-        public GamePlayersController(IGamePlayerRepository repository)
+        public GamePlayersController(IGamePlayerRepository repository, IPlayerRepository playerRepository)
         {
             _repository = repository;
+            _playerRepository = playerRepository;
         }
 
         // GET api/<GamePlayersController>/5
@@ -32,14 +34,14 @@ namespace Salvo.Controllers
             {
                 // Obtengo el Email del usuario autenticado
                 string email = User.FindFirst("Player") != null ? User.FindFirst("Player").Value : "Guest";
-                
+
                 // Obtención del GP
                 var gp = _repository.GetGamePlayerView(id);
-                
+
                 // Verificar si el GP corresponde al mismo Email del usuario autenticado
                 if (gp.Player.Email != email)
                     return Forbid();
-                
+
                 var gameView = new GameViewDTO
                 {
                     Id = gp.Id,
@@ -114,7 +116,7 @@ namespace Salvo.Controllers
                 // Si no existen problemas insertamos los barcos
                 foreach (ShipDTO ship in ships)
                 {
-                    gamePlayer.Ships.Add( new Ship
+                    gamePlayer.Ships.Add(new Ship
                     {
                         Id = ship.Id,
                         Type = ship.Type,
@@ -132,11 +134,60 @@ namespace Salvo.Controllers
                 // Retornamos
                 return StatusCode(201, "Creado!");
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return StatusCode(500, ex.Message);
             }
         }
 
+        [HttpPost("{id}/salvos", Name = "Salvos")]
+        public IActionResult Salvos(long id, [FromBody] SalvoDTO salvo)
+        {
+            try
+            {
+                // Obtengo el usuario autenticado
+                string email = User.FindFirst("Player") != null ? User.FindFirst("Player").Value : "Guest";
+
+                // Obtengo el Game Player de la DB
+                GamePlayer gamePlayer = _repository.FindById(id);
+
+                // Validación
+                if (gamePlayer == null)
+                    return StatusCode(403, "No existe el juego");
+
+                // Validación
+                if (gamePlayer.Player.Email != email)
+                    return StatusCode(403, "El usuario no se encuentra en el juego");
+
+                // Validación
+                var Op = gamePlayer.GetOpponet();
+                var gpTurn = gamePlayer.Salvos.LastOrDefault().Turn;
+                var OpTurn = Op.Salvos.LastOrDefault().Turn;
+                if (gpTurn > OpTurn)
+                    return StatusCode(403, "No se puede adelantar el turno");
+
+                // Si no existen problemas se insertan los salvos
+                gamePlayer.Salvos.Add(new Models.Salvo
+                {
+                    Id = salvo.Id,
+                    Turn = salvo.Turn,
+                    Locations = salvo.Locations.Select(locations => new SalvoLocation
+                    {
+                        Id = locations.Id,
+                        Location = locations.Location
+                    }).ToList()
+                }); 
+
+                // Se almacena en la DB
+                _repository.Save(gamePlayer);
+
+                // Retornamos
+                return StatusCode(200);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
     }
 }

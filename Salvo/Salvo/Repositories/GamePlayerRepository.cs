@@ -50,6 +50,14 @@ namespace Salvo.Repositories
             return FindByCondition(gamePlayer => gamePlayer.Id == Id)
                 .Include(gamePlayer => gamePlayer.Player)
                 .Include(gamaPlayer => gamaPlayer.Ships)
+                .Include(gamePlayer => gamePlayer.Salvos)
+                .Include(gamePlayer => gamePlayer.Game)
+                    .ThenInclude(game => game.GamePlayers)
+                        .ThenInclude(gp => gp.Player)
+                        .Include(gp => gp.Salvos)
+                .Include(gamePlayer => gamePlayer.Game)
+                    .ThenInclude(game => game.GamePlayers)
+                        .ThenInclude(gp => gp.Salvos)
                 .FirstOrDefault();       
         }
     }
