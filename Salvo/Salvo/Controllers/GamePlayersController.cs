@@ -98,6 +98,9 @@ namespace Salvo.Controllers
                 // Obtengo el usuario autenticado
                 string email = User.FindFirst("Player") != null ? User.FindFirst("Player").Value : "Guest";
 
+                // Obtengo el player de la DB
+                Player player = _playerRepository.FindByEmail(email);
+
                 // Obtengo el player con los ships de la DB
                 GamePlayer gamePlayer = _repository.FindById(id);
 
@@ -106,33 +109,30 @@ namespace Salvo.Controllers
                     return StatusCode(403, "No existe el juego");
 
                 // Validación
-                if (gamePlayer.Player.Email != email)
+                if (gamePlayer.Player.Id != player.Id)
                     return StatusCode(403, "El usuario no se encuentra en el juego");
 
                 // Validación
-                if (gamePlayer.Ships.Equals(ships))
+                if (gamePlayer.Ships.Count == 5)
                     return StatusCode(403, "Ya se han posicionado los barcos");
 
                 // Si no existen problemas insertamos los barcos
-                foreach (ShipDTO ship in ships)
+                gamePlayer.Ships = ships.Select(ship => new Ship
                 {
-                    gamePlayer.Ships.Add(new Ship
+                    GamePlayerId = gamePlayer.Id,
+                    Type = ship.Type,
+                    Locations = ship.Locations.Select(location => new ShipLocation
                     {
-                        Id = ship.Id,
-                        Type = ship.Type,
-                        Locations = ship.Locations.Select(locations => new ShipLocation
-                        {
-                            Id = locations.Id,
-                            Location = locations.Location
-                        }).ToList()
-                    });
-                }
+                        ShipId = ship.Id,
+                        Location = location.Location
+                    }).ToList()
+                }).ToList();
 
                 // Guardamos en la DB
                 _repository.Save(gamePlayer);
 
                 // Retornamos
-                return StatusCode(201, "Creado!");
+                return StatusCode(201);
             }
             catch (Exception ex)
             {
@@ -148,6 +148,9 @@ namespace Salvo.Controllers
                 // Obtengo el usuario autenticado
                 string email = User.FindFirst("Player") != null ? User.FindFirst("Player").Value : "Guest";
 
+                // Obtengo el player de la DB
+                Player player = _playerRepository.FindByEmail(email);
+
                 // Obtengo el Game Player de la DB
                 GamePlayer gamePlayer = _repository.FindById(id);
 
@@ -156,25 +159,26 @@ namespace Salvo.Controllers
                     return StatusCode(403, "No existe el juego");
 
                 // Validación
-                if (gamePlayer.Player.Email != email)
+                if (gamePlayer.Player.Id != player.Id)
                     return StatusCode(403, "El usuario no se encuentra en el juego");
 
                 // Validación
-                var Op = gamePlayer.GetOpponet();
-                var gpTurn = gamePlayer.Salvos.LastOrDefault().Turn;
-                var OpTurn = Op.Salvos.LastOrDefault().Turn;
-                if (gpTurn > OpTurn)
+                if (gamePlayer.Game.GamePlayers.Count != 2)
+                    return StatusCode(403, "No existe un oponente");
+
+                // Validación
+                if (gamePlayer.Salvos.LastOrDefault().Turn > gamePlayer.GetOpponet().Salvos.LastOrDefault().Turn) 
                     return StatusCode(403, "No se puede adelantar el turno");
 
                 // Si no existen problemas se insertan los salvos
                 gamePlayer.Salvos.Add(new Models.Salvo
                 {
-                    Id = salvo.Id,
+                    GamePlayerID = gamePlayer.Id,
                     Turn = salvo.Turn,
-                    Locations = salvo.Locations.Select(locations => new SalvoLocation
+                    Locations = salvo.Locations.Select(salvoLocation => new SalvoLocation
                     {
-                        Id = locations.Id,
-                        Location = locations.Location
+                        SalvoId = salvoLocation.Id,
+                        Location = salvoLocation.Location
                     }).ToList()
                 }); 
 
@@ -182,7 +186,7 @@ namespace Salvo.Controllers
                 _repository.Save(gamePlayer);
 
                 // Retornamos
-                return StatusCode(200);
+                return StatusCode(201);
             }
             catch (Exception ex)
             {
