@@ -140,8 +140,8 @@ namespace Salvo.Controllers
             }
         }
 
-        [HttpPost("{id}/salvos", Name = "Salvos")]
-        public IActionResult Salvos(long id, [FromBody] SalvoDTO salvo)
+        [HttpPost("{id}/salvos")]
+        public IActionResult Post(long id, [FromBody] SalvoDTO salvo)
         {
             try
             {
@@ -154,27 +154,55 @@ namespace Salvo.Controllers
                 // Obtengo el Game Player de la DB
                 GamePlayer gamePlayer = _repository.FindById(id);
 
-                // Validación
+                // Obtengo el oponente
+                GamePlayer opGamePlayer = gamePlayer.GetOpponet();
+                
+                // Turnos de los jugadores
+                int playerTurn = 0;
+                int opponentTurn = 0;
+
+                // Validaciones ---------------------------------------------------------------------------------
+
+                // Validación - Verificamos que exista una partida
                 if (gamePlayer == null)
                     return StatusCode(403, "No existe el juego");
 
-                // Validación
+                // Validación - Verificamos que el usuario autenticado este en ese juego
                 if (gamePlayer.Player.Id != player.Id)
                     return StatusCode(403, "El usuario no se encuentra en el juego");
+                
+                playerTurn = gamePlayer.Salvos != null ? gamePlayer.Salvos.Count + 1 : 1;
+                // Validación - Verificamos que exista un oponente para buscar su turno
+                if (opGamePlayer != null)
+                    opponentTurn = opGamePlayer.Salvos != null ? opGamePlayer.Salvos.Count : 0;
+                else
+                    return StatusCode(403, "No tienes un oponente");
 
-                // Validación
-                if (gamePlayer.Game.GamePlayers.Count != 2)
-                    return StatusCode(403, "No existe un oponente");
-
-                // Validación
-                if (gamePlayer.Salvos.LastOrDefault().Turn > gamePlayer.GetOpponet().Salvos.LastOrDefault().Turn) 
+                // Validación - Verificamos que sea su turno de disparar
+                if ((playerTurn - opponentTurn) < -1 || (playerTurn - opponentTurn) > 1)
                     return StatusCode(403, "No se puede adelantar el turno");
+                if((playerTurn - opponentTurn) == 1 && gamePlayer.JoinDate > opGamePlayer.JoinDate)
+                    return StatusCode(403, "No se puede adelantar el turno!!!!");
+
+                // Validación - Verificamos que el jugador tenga posicionados sus barcos
+                if (gamePlayer.Ships.Count != 5)
+                    return StatusCode(403, "Debes posicionar tus barcos primero");
+
+                // Validación - Verificamos que estemos disparando a los 5 barcos del oponente
+                if (salvo.Locations.Count != 5)
+                    return StatusCode(403, "Debe indicar todas las posiciones de los salvos");
+
+                // Validación - Verificamos que el oponente tenga posicionados sus barcos
+                if (opGamePlayer.Ships.Count != 5)
+                    return StatusCode(403, "El oponente todavia no ha posicionado sus barcos");
+
+                // Guardado ----------------------------------------------------------------------------------------
 
                 // Si no existen problemas se insertan los salvos
                 gamePlayer.Salvos.Add(new Models.Salvo
                 {
                     GamePlayerID = gamePlayer.Id,
-                    Turn = salvo.Turn,
+                    Turn = playerTurn,
                     Locations = salvo.Locations.Select(salvoLocation => new SalvoLocation
                     {
                         SalvoId = salvoLocation.Id,

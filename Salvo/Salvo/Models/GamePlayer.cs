@@ -26,7 +26,7 @@ namespace Salvo.Models
 
         public GamePlayer GetOpponet()
         {
-            return Game.GamePlayers.FirstOrDefault(gamePlayer => !(gamePlayer.Player.Id == Player.Id));
+            return Game.GamePlayers.FirstOrDefault(gamePlayer => gamePlayer.Id != Id);
         }
     }
 }

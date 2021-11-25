@@ -53,11 +53,10 @@ namespace Salvo.Repositories
                 .Include(gamePlayer => gamePlayer.Salvos)
                 .Include(gamePlayer => gamePlayer.Game)
                     .ThenInclude(game => game.GamePlayers)
-                        .ThenInclude(gp => gp.Player)
-                        .Include(gp => gp.Salvos)
+                        .ThenInclude(gp => gp.Salvos)
                 .Include(gamePlayer => gamePlayer.Game)
                     .ThenInclude(game => game.GamePlayers)
-                        .ThenInclude(gp => gp.Salvos)
+                        .ThenInclude(gp => gp.Ships)
                 .FirstOrDefault();       
         }
     }
