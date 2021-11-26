@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -30,7 +31,9 @@ namespace Salvo
             services.AddRazorPages();
 
             // Inyeccion de dependencias para salvo context
-            services.AddDbContext<SalvoContext>(options => options.UseSqlServer(Configuration.GetConnectionString("SalvoDataBase")));
+            services.AddDbContext<SalvoContext>(options => options
+            .UseSqlServer(Configuration.GetConnectionString("SalvoDataBase"),
+            o => o.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery)));
 
             // Inyectar repositorio de game
             services.AddScoped<IGameRepository, GameRepository>();

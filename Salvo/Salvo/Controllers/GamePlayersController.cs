@@ -145,6 +145,8 @@ namespace Salvo.Controllers
         {
             try
             {
+                // Inicializacion de variables -------------------------------------------------------------------
+
                 // Obtengo el usuario autenticado
                 string email = User.FindFirst("Player") != null ? User.FindFirst("Player").Value : "Guest";
 
@@ -169,9 +171,8 @@ namespace Salvo.Controllers
 
                 // Validación - Verificamos que el usuario autenticado este en ese juego
                 if (gamePlayer.Player.Id != player.Id)
-                    return StatusCode(403, "El usuario no se encuentra en el juego");
+                    return StatusCode(403, "El usuario no se encuentra en el juego");               
                 
-                playerTurn = gamePlayer.Salvos != null ? gamePlayer.Salvos.Count + 1 : 1;
                 // Validación - Verificamos que exista un oponente para buscar su turno
                 if (opGamePlayer != null)
                     opponentTurn = opGamePlayer.Salvos != null ? opGamePlayer.Salvos.Count : 0;
@@ -179,21 +180,26 @@ namespace Salvo.Controllers
                     return StatusCode(403, "No tienes un oponente");
 
                 // Validación - Verificamos que sea su turno de disparar
+                playerTurn = gamePlayer.Salvos != null ? gamePlayer.Salvos.Count + 1 : 1;
                 if ((playerTurn - opponentTurn) < -1 || (playerTurn - opponentTurn) > 1)
                     return StatusCode(403, "No se puede adelantar el turno");
-                if((playerTurn - opponentTurn) == 1 && gamePlayer.JoinDate > opGamePlayer.JoinDate)
+
+                // Validación - Verificamos quien se unio primero para cuando ambos jugadores esten en el mismo turno
+                // y quiera disparar la persona que no se unio primero
+                if ((playerTurn - opponentTurn) == 1 && gamePlayer.JoinDate > opGamePlayer.JoinDate)
                     return StatusCode(403, "No se puede adelantar el turno!!!!");
 
                 // Validación - Verificamos que el jugador tenga posicionados sus barcos
-                if (gamePlayer.Ships.Count != 5)
+                if (gamePlayer.Ships.Count == 0)
                     return StatusCode(403, "Debes posicionar tus barcos primero");
 
-                // Validación - Verificamos que estemos disparando a los 5 barcos del oponente
+                // Validación - Verificamos que se este disparando los 5 salvos al oponente
+                // (Esta validación tambien se hace en el front)
                 if (salvo.Locations.Count != 5)
                     return StatusCode(403, "Debe indicar todas las posiciones de los salvos");
 
                 // Validación - Verificamos que el oponente tenga posicionados sus barcos
-                if (opGamePlayer.Ships.Count != 5)
+                if (opGamePlayer.Ships.Count == 0)
                     return StatusCode(403, "El oponente todavia no ha posicionado sus barcos");
 
                 // Guardado ----------------------------------------------------------------------------------------

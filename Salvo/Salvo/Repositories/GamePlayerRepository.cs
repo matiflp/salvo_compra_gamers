@@ -52,10 +52,10 @@ namespace Salvo.Repositories
                 .Include(gamaPlayer => gamaPlayer.Ships)
                 .Include(gamePlayer => gamePlayer.Salvos)
                 .Include(gamePlayer => gamePlayer.Game)
-                    .ThenInclude(game => game.GamePlayers)
+                    .ThenInclude(game => game.GamePlayers.Where(gp => gp.Id != Id))
                         .ThenInclude(gp => gp.Salvos)
                 .Include(gamePlayer => gamePlayer.Game)
-                    .ThenInclude(game => game.GamePlayers)
+                    .ThenInclude(game => game.GamePlayers.Where(gp => gp.Id != Id))
                         .ThenInclude(gp => gp.Ships)
                 .FirstOrDefault();       
         }
