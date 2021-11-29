@@ -24,9 +24,42 @@ namespace Salvo.Models
             return Player.GetScore(Game);
         }
 
-        public GamePlayer GetOpponet()
+        public GamePlayer GetOpponent()
         {
             return Game.GamePlayers.FirstOrDefault(gamePlayer => gamePlayer.Id != Id);
+        }
+        // deberiamos modificar para agregar los hits y los sunks
+        public ICollection<SalvoHitDTO> GetHits()
+        {
+            return Salvos.Select(salvo => new SalvoHitDTO
+            {
+                Turn = salvo.Turn,
+                Hits = GetOpponent()?.Ships.Select(ship => new ShipHitDTO
+                {
+                    Type = ship.Type,
+                    Hits = salvo.Locations
+                    .Where(salvoLocation => ship.Locations
+                        .Any(shipLocation => shipLocation.Location == salvoLocation.Location))
+                    .Select(salvoLocation => salvoLocation.Location).ToList()
+                }).ToList()
+            }).ToList();
+        }
+
+        public ICollection<string> GetSunks()
+        {
+            int lastTurn = Salvos.Count;
+            List<string> salvoLocations =
+                GetOpponent()?.Salvos
+                    .Where(salvo => salvo.Turn <= lastTurn)
+                    .SelectMany(salvo => salvo.Locations
+                        .Select(location => location.Location)).ToList();
+
+            return Ships?
+                .Where(ship => ship.Locations
+                    .Select(shipLocation => shipLocation.Location)
+                    .All(salvoLocation => salvoLocations != null ? salvoLocations
+                        .Any(shipLocation => shipLocation == salvoLocation) : false))
+                .Select(ship => ship.Type).ToList();
         }
     }
 }

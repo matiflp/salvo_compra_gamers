@@ -80,7 +80,11 @@ namespace Salvo.Controllers
                             Id = salvoLocation.Id,
                             Location = salvoLocation.Location
                         }).ToList()
-                    })).ToList()
+                    })).ToList(),
+                    Hits = gp.GetHits(),
+                    HitsOpponent = gp.GetOpponent()?.GetHits(),
+                    Sunks = gp.GetSunks(),
+                    SunksOpponent = gp.GetOpponent()?.GetSunks()
                 };
                 return Ok(gameView);
             }
@@ -157,7 +161,7 @@ namespace Salvo.Controllers
                 GamePlayer gamePlayer = _repository.FindById(id);
 
                 // Obtengo el oponente
-                GamePlayer opGamePlayer = gamePlayer.GetOpponet();
+                GamePlayer opGamePlayer = gamePlayer.GetOpponent();
                 
                 // Turnos de los jugadores
                 int playerTurn = 0;
