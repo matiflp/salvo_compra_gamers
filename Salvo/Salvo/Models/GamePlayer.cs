@@ -57,8 +57,8 @@ namespace Salvo.Models
             return Ships?
                 .Where(ship => ship.Locations
                     .Select(shipLocation => shipLocation.Location)
-                    .All(salvoLocation => salvoLocations != null ? salvoLocations
-                        .Any(shipLocation => shipLocation == salvoLocation) : false))
+                    .All(shipLocation => shipLocation != null ? salvoLocations
+                        .Any(salvoLocation => salvoLocation == shipLocation) : false))
                 .Select(ship => ship.Type).ToList();
         }
     }
