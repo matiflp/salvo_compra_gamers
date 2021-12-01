@@ -28,7 +28,7 @@ namespace Salvo.Models
         {
             return Game.GamePlayers.FirstOrDefault(gamePlayer => gamePlayer.Id != Id);
         }
-        // deberiamos modificar para agregar los hits y los sunks
+        
         public ICollection<SalvoHitDTO> GetHits()
         {
             return Salvos.Select(salvo => new SalvoHitDTO
