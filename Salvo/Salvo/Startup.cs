@@ -44,6 +44,9 @@ namespace Salvo
             // Inyectar repositorio de players
             services.AddScoped<IPlayerRepository, PlayerRepository>();
 
+            // Inyectar repositorio de los scores
+            services.AddScoped<IScoreRepository, ScoreRepository>();
+
             //Aca debemos seguir agregando los scoped (de ser necesario)
             //**********
 
@@ -60,6 +63,8 @@ namespace Salvo
             {
                 options.AddPolicy("PlayerOnly", policy => policy.RequireClaim("Player"));
             });
+
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -16,9 +16,7 @@ namespace Salvo.Repositories
         public GamePlayer GetGamePlayerView(int idGamePlayer)
         {
             return FindAll(source => source.Include(gamePlayer => gamePlayer.Ships)
-                                                .ThenInclude(ship => ship.Locations)
                                             .Include(gamePlayer => gamePlayer.Salvos)
-                                                .ThenInclude(salvo => salvo.Locations)
                                             .Include(gamePlayer => gamePlayer.Game)
                                                 .ThenInclude(game => game.GamePlayers)
                                                     .ThenInclude(gp => gp.Player)
@@ -50,13 +48,16 @@ namespace Salvo.Repositories
             return FindByCondition(gamePlayer => gamePlayer.Id == Id)
                 .Include(gamePlayer => gamePlayer.Player)
                 .Include(gamaPlayer => gamaPlayer.Ships)
+                    .ThenInclude(ship => ship.Locations)
                 .Include(gamePlayer => gamePlayer.Salvos)
                 .Include(gamePlayer => gamePlayer.Game)
-                    .ThenInclude(game => game.GamePlayers.Where(gp => gp.Id != Id))
+                    .ThenInclude(game => game.GamePlayers)
                         .ThenInclude(gp => gp.Salvos)
+                            .ThenInclude(salvo => salvo.Locations)
                 .Include(gamePlayer => gamePlayer.Game)
-                    .ThenInclude(game => game.GamePlayers.Where(gp => gp.Id != Id))
+                    .ThenInclude(game => game.GamePlayers)
                         .ThenInclude(gp => gp.Ships)
+                            .ThenInclude(ship => ship.Locations)
                 .FirstOrDefault();       
         }
     }

@@ -19,11 +19,13 @@ namespace Salvo.Controllers
 
         private IGamePlayerRepository _repository;
         private IPlayerRepository _playerRepository;
+        private IScoreRepository _scoreRepository;
 
-        public GamePlayersController(IGamePlayerRepository repository, IPlayerRepository playerRepository)
+        public GamePlayersController(IGamePlayerRepository repository, IPlayerRepository playerRepository, IScoreRepository scoreRepository)
         {
             _repository = repository;
             _playerRepository = playerRepository;
+            _scoreRepository = scoreRepository;
         }
 
         // GET api/<GamePlayersController>/5
@@ -84,7 +86,8 @@ namespace Salvo.Controllers
                     Hits = gp.GetHits(),
                     HitsOpponent = gp.GetOpponent()?.GetHits(),
                     Sunks = gp.GetSunks(),
-                    SunksOpponent = gp.GetOpponent()?.GetSunks()
+                    SunksOpponent = gp.GetOpponent()?.GetSunks(),
+                    GameState = Enum.GetName(typeof(GameState), gp.GetGameState())
                 };
                 return Ok(gameView);
             }
@@ -167,6 +170,9 @@ namespace Salvo.Controllers
                 int playerTurn = 0;
                 int opponentTurn = 0;
 
+                // Obtenemos el GameState
+                GameState gameState = gamePlayer.GetGameState();
+
                 // Validaciones ---------------------------------------------------------------------------------
 
                 // Validación - Verificamos que exista una partida
@@ -182,6 +188,10 @@ namespace Salvo.Controllers
                     opponentTurn = opGamePlayer.Salvos != null ? opGamePlayer.Salvos.Count : 0;
                 else
                     return StatusCode(403, "No tienes un oponente");
+
+                // Validacion - Verificamos si el juego termino
+                if (gameState == GameState.LOSS || gameState == GameState.WIN || gameState == GameState.TIE)
+                    return StatusCode(403, "El juego terminó");
 
                 // Validación - Verificamos que sea su turno de disparar
                 playerTurn = gamePlayer.Salvos != null ? gamePlayer.Salvos.Count + 1 : 1;
@@ -199,8 +209,8 @@ namespace Salvo.Controllers
 
                 // Validación - Verificamos que se este disparando los 5 salvos al oponente
                 // (Esta validación tambien se hace en el front)
-                if (salvo.Locations.Count != 5)
-                    return StatusCode(403, "Debe indicar todas las posiciones de los salvos");
+                /*if (salvo.Locations.Count != 5)
+                    return StatusCode(403, "Debe indicar todas las posiciones de los salvos");*/
 
                 // Validación - Verificamos que el oponente tenga posicionados sus barcos
                 if (opGamePlayer.Ships.Count == 0)
@@ -222,6 +232,69 @@ namespace Salvo.Controllers
 
                 // Se almacena en la DB
                 _repository.Save(gamePlayer);
+
+                gameState = gamePlayer.GetGameState();
+
+                if(gameState == GameState.WIN)
+                {
+                    Score score = new Score
+                    {
+                        FinishDate = DateTime.Now,
+                        GameId = gamePlayer.GameId,
+                        PlayerId = gamePlayer.PlayerId,
+                        Point = 1
+                    };
+                    _scoreRepository.Save(score);
+
+                    Score scoreOpponent = new Score
+                    {
+                        FinishDate = DateTime.Now,
+                        GameId = gamePlayer.GameId,
+                        PlayerId = opGamePlayer.PlayerId,
+                        Point = 0
+                    };
+                    _scoreRepository.Save(scoreOpponent);
+                }
+                else if (gameState == GameState.LOSS)
+                {
+                    Score score = new Score
+                    {
+                        FinishDate = DateTime.Now,
+                        GameId = gamePlayer.GameId,
+                        PlayerId = gamePlayer.PlayerId,
+                        Point = 0
+                    };
+                    _scoreRepository.Save(score);
+
+                    Score scoreOpponent = new Score
+                    {
+                        FinishDate = DateTime.Now,
+                        GameId = gamePlayer.GameId,
+                        PlayerId = opGamePlayer.PlayerId,
+                        Point = 1
+                    };
+                    _scoreRepository.Save(scoreOpponent);
+                }
+                else if (gameState == GameState.TIE)
+                {
+                    Score score = new Score
+                    {
+                        FinishDate = DateTime.Now,
+                        GameId = gamePlayer.GameId,
+                        PlayerId = gamePlayer.PlayerId,
+                        Point = 0.5
+                    };
+                    _scoreRepository.Save(score);
+
+                    Score scoreOpponent = new Score
+                    {
+                        FinishDate = DateTime.Now,
+                        GameId = gamePlayer.GameId,
+                        PlayerId = opGamePlayer.PlayerId,
+                        Point = 0.5
+                    };
+                    _scoreRepository.Save(scoreOpponent);
+                }
 
                 // Retornamos
                 return StatusCode(201);
