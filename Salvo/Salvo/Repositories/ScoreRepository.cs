@@ -16,7 +16,7 @@ namespace Salvo.Repositories
         public void Save(Score score)
         {
             Create(score);
-            Save(score);
+            SaveChanges();
         }
     }
 }
