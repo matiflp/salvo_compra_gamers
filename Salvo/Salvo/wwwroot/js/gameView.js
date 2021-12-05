@@ -26,7 +26,7 @@ var app = new Vue({
                 this.getGameData();
             })
             .catch(error => {
-                alert("error al obtener los datos");
+                alert("error al obtener los datos" + error.response.data);
             })
     },
     methods: {

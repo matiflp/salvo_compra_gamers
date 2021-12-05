@@ -58,6 +58,10 @@ namespace Salvo.Models
                     new Game{CreationDate = DateTime.Now.AddHours(1)},
                     new Game{CreationDate = DateTime.Now.AddHours(2)},
                     new Game{CreationDate = DateTime.Now.AddHours(3)},
+                    new Game{CreationDate = DateTime.Now.AddHours(4)},
+                    new Game{CreationDate = DateTime.Now.AddHours(5)},
+                    new Game{CreationDate = DateTime.Now.AddHours(6)},
+                    new Game{CreationDate = DateTime.Now.AddHours(7)},
                 };
                 // recorremos los Games y los añadimos al contexto
                 foreach (Game game in games)
