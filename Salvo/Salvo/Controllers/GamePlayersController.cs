@@ -56,7 +56,8 @@ namespace Salvo.Controllers
                         {
                             Id = gameplayer.PlayerId,
                             Email = gameplayer.Player.Email
-                        }
+                        },
+                        Point = gameplayer.GetScore().Point
                     }).ToList(),
                     Ships = gp.Ships.Select(ships => new ShipDTO
                     {
@@ -209,8 +210,8 @@ namespace Salvo.Controllers
 
                 // Validación - Verificamos que se este disparando los 5 salvos al oponente
                 // (Esta validación tambien se hace en el front)
-                /*if (salvo.Locations.Count != 5)
-                    return StatusCode(403, "Debe indicar todas las posiciones de los salvos");*/
+                if (salvo.Locations.Count != 5)
+                    return StatusCode(403, "Debe indicar 5 posiciones de los salvos");
 
                 // Validación - Verificamos que el oponente tenga posicionados sus barcos
                 if (opGamePlayer.Ships.Count == 0)
@@ -233,8 +234,8 @@ namespace Salvo.Controllers
                 // Se almacena en la DB
                 _repository.Save(gamePlayer);
 
+                // Se vuelve a traer el estado del juego y se verifica si se ha terminado y quien gano
                 gameState = gamePlayer.GetGameState();
-
                 if(gameState == GameState.WIN)
                 {
                     Score score = new Score

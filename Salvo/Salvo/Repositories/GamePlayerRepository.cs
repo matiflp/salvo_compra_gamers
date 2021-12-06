@@ -18,9 +18,11 @@ namespace Salvo.Repositories
             return FindAll(source => source
                     .Include(gamePlayer => gamePlayer.Ships)
                     .Include(gamePlayer => gamePlayer.Salvos)
+                    .Include(gamePlayer => gamePlayer.Player)
                     .Include(gamePlayer => gamePlayer.Game)
                         .ThenInclude(game => game.GamePlayers)
                             .ThenInclude(gp => gp.Player)
+                                .ThenInclude(player => player.Scores)
                     .Include(gamePlayer => gamePlayer.Game)
                         .ThenInclude(game => game.GamePlayers)
                             .ThenInclude(gp => gp.Salvos)
