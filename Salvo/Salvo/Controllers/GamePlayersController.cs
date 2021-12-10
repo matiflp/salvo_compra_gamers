@@ -57,7 +57,7 @@ namespace Salvo.Controllers
                             Id = gameplayer.PlayerId,
                             Email = gameplayer.Player.Email
                         },
-                        Point = gameplayer.GetScore().Point
+                        Point = gameplayer.GetScore() != null ? gameplayer.GetScore().Point : null 
                     }).ToList(),
                     Ships = gp.Ships.Select(ships => new ShipDTO
                     {

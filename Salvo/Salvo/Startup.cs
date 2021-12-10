@@ -63,7 +63,6 @@ namespace Salvo
             {
                 options.AddPolicy("PlayerOnly", policy => policy.RequireClaim("Player"));
             });
-
             
         }
 
@@ -79,6 +78,7 @@ namespace Salvo
                 app.UseExceptionHandler("/Error");
             }
 
+            app.UseDefaultFiles();
             app.UseStaticFiles();
 
             app.UseRouting();
