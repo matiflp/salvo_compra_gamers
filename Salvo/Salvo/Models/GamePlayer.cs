@@ -19,7 +19,7 @@ namespace Salvo.Models
         public ICollection<Ship> Ships { get; set; }
         public ICollection<Salvo> Salvos { get; set; }
 
-        public Score? GetScore()
+        public Score GetScore()
         {
             return Player.GetScore(Game);
         }
@@ -57,7 +57,7 @@ namespace Salvo.Models
             return Ships?
                 .Where(ship => ship.Locations
                     .Select(shipLocation => shipLocation.Location)
-                    .All(shipLocation => shipLocation != null ? salvoLocations
+                    .All(shipLocation => salvoLocations != null ? salvoLocations
                         .Any(salvoLocation => salvoLocation == shipLocation) : false))
                 .Select(ship => ship.Type).ToList();
         }

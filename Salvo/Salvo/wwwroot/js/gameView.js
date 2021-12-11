@@ -43,6 +43,21 @@ var app = new Vue({
                 clearInterval(this.interval);
                 this.interval = null;
             }
+
+            if (this.gameView.gameState == 'WIN' || this.gameView.gameState == 'LOSS' || this.gameView.gameState == 'TIE') {
+                switch (this.gameView.gameState) {
+                    case "WIN":
+                        alert("Juego Terminado. Ganaste la partida");
+                        break;
+                    case "LOSS":
+                        alert("Juego Terminado. Perdiste la partida");
+                        break;
+                    case "TIE":
+                        alert("Juego Terminado. Resulto en empate");
+                        break;
+                }
+                
+            }
         },
         refresh: function () {
             axios.get('/api/gamePlayers/' + gpId)
@@ -108,7 +123,10 @@ var app = new Vue({
             if (this.salvoCount == 5) {
                 var cellsArray = [];
                 $(".salvo.shoot").each(function () {
-                    cellsArray.push({ id: 0, location: $(this).attr("id") });
+                    if ($(this).hasClass('shooted'))
+                        $(this).removeClass('shoot');
+                    else
+                        cellsArray.push({ id: 0, location: $(this).attr("id") });                  
                 })
                 var salvo = new Object();
                 salvo.id = 0;
@@ -232,6 +250,7 @@ function placeSalvos(salvos, playerId, ships) {
         if (salvo.player.id == playerId) {
             salvo.locations.forEach(location => {
                 $('#' + location.location).addClass("shooted");
+                $('#' + location.location).removeClass("shoot");
                 $('#' + location.location).text(salvo.turn);
             })
         }

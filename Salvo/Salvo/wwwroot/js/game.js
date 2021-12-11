@@ -23,7 +23,7 @@
                     window.location.href = '/game.html?gp=' + gpId;
                 })
                 .catch(error => {
-                    alert("erro al unirse al juego");
+                    alert("error al unirse al juego");
                 });
         },
         createGame() {
@@ -51,7 +51,7 @@
                         this.showLogin(true);
                 })
                 .catch(error => {
-                    alert("erro al obtener los datos");
+                    alert("error al obtener los datos");
                 });
         },
         showModal: function (show) {

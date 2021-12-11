@@ -17,6 +17,7 @@ namespace Salvo.Repositories
         {
             return FindAll(source => source
                     .Include(gamePlayer => gamePlayer.Ships)
+                        .ThenInclude(ship => ship.Locations)
                     .Include(gamePlayer => gamePlayer.Salvos)
                     .Include(gamePlayer => gamePlayer.Player)
                     .Include(gamePlayer => gamePlayer.Game)
