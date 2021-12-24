@@ -18,10 +18,28 @@ namespace Salvo.Repositories
             return FindByCondition(player => player.Email == email).FirstOrDefault();
         }
 
-        public void Save(Player player)
+        public Player FindById(long id)
         {
-            Create(player);
-            SaveChanges();
+            return FindByCondition(player => player.Id == id)
+                .FirstOrDefault();
+        }
+
+        public string Save(Player player)
+        {
+            try
+            {
+                if (player.Id == 0)
+                    Create(player);
+                else
+                    Update(player);
+                SaveChanges();
+                return "OK";
+            }
+            catch(Exception ex)
+            {
+                return ex.Message;
+            }
+            
         }
     }
 }

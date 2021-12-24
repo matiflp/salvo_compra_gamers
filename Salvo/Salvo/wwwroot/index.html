@@ -28,13 +28,73 @@
                 <span id="user-name" v-if="player != 'Guest'">{{ player }} </span>
                 <form id="login-form" class="form-inline my-2 my-lg-0">
                     <input v-model:value="email" class="form-control mr-sm-2" type="email" placeholder="Email" aria-label="Email">
+                    <input v-model:value="name" class="form-control mr-sm-2" type="text" placeholder="Name" aria-label="Name">
                     <input v-model:value="password" class="form-control mr-sm-2" type="password" placeholder="Contrase&ntilde;a" aria-label="Contraseña">
+                    <a class="flex--item s-link fs-caption" href="#" data-toggle="modal" data-target="#forgetpassword">Forgot password?</a>
                     <button v-on:click="login" id="login-btn" class="btn btn-outline-success my-2 my-sm-0" type="button">Login</button>
                     <button v-on:click="signin" id="signin-btn" class="btn btn-outline-primary ml-1 mr-1 my-2 my-sm-0" type="button">Registro</button>
                 </form>
                 <button v-on:click="logout" id="logout-btn" class="btn btn-outline-secondary ml-1 my-2 my-sm-0" type="button">Logout</button>
             </div>
         </nav>
+
+        <!-- Forget Password Modal -->
+        <div class="modal fade" id="forgetpassword" role="dialog">
+            <div class="modal-dialog">
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4> Recuperar contraseña </h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <h6>Ingrese su dirección de email para enviarle las instrucciones a seguir</h6>
+                        <form role="form">
+                            <div class="form-group">
+                                <input v-model:value="emailForPass" class="form-control mr-sm-2" type="email" placeholder="Email" aria-label="emailForPass">
+                            </div>
+                            <button v-on:click="forgetPassword" type="button" class="btn btn-success btn-block"> Enviar </button>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-danger btn-default pull-left" data-dismiss="modal">Cancelar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reset Password Modal -->
+        <div class="modal fade" id="resetpassword" role="dialog">
+            <div class="modal-dialog">
+                <!-- Modal content -->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4>Recuperar Contraseña</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <form role="form">
+                            <input id="token" type="hidden" name="Token" />
+                            <input id="email" type="hidden" name="Email" />
+                            <div class="form-group">
+                                <label for="newpassword"> Nueva Contraseña </label>
+                                <input v-model:value="newpassword" class="form-control mr-sm-2" type="password" placeholder="Ingrese una nueva contraseña" aria-label="newpassword">
+                            </div>
+                            <div class="form-group">
+                                <label for="confirmpassword"> Confirmar Contraseña </label>
+                                <input v-model:value="confirmpassword" class="form-control mr-sm-2"  type="password" placeholder="confirme la contraseña" aria-label="confirmpassword">
+                            </div>
+                            <button v-on:click="resetPassword" type="button" class="btn btn-success btn-block"> Enviar </button>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-danger btn-default pull-left" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> Cancel</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>    
+
         <div class="container mt-5">
             <div class="row justify-content-center">
                 <div class="col-7">
@@ -50,7 +110,7 @@
                             <span>{{game.creationDate | dateFormat}}</span>
                             <ul>
                                 <li v-for="gamePlayer in game.gamePlayers">
-                                    {{gamePlayer.player.email}} 
+                                    {{gamePlayer.player.email}}
                                     <button v-if="gamePlayer.player.email == player" class="btn btn-primary btn-sm" v-on:click="returnGame(gamePlayer.id)">Ir al juego</button>
                                     <button v-else-if="player != 'Guest' && gamePlayer.player.email != player && game.gamePlayers.length < 2" class="btn btn-success btn-sm" v-on:click="joinGame(game.id)">Unirse al juego</button>
                                 </li>
@@ -112,5 +172,7 @@
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script src="js/game.js"></script>
+    <!--<script src="js/gameView.js"></script>-->
+    
 </body>
 </html>

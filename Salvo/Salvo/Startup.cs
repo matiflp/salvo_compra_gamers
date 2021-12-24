@@ -2,17 +2,23 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 using Salvo.Models;
+using Salvo.Models.Auth;
 using Salvo.Repositories;
+using Salvo.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
+using WebPWrecover.Services;
 
 namespace Salvo
 {
@@ -47,6 +53,15 @@ namespace Salvo
             // Inyectar repositorio de los scores
             services.AddScoped<IScoreRepository, ScoreRepository>();
 
+            // Inyectar servicio para gestionar el usuario
+            services.AddScoped<IUserService, UserService>();
+
+            // Inyectar servicio para enviar emails
+            services.AddTransient<IEmailSender, EmailSender>();
+
+            // Inyectar servicio para enviar emails
+            services.AddTransient<ITokenService, TokenService>();
+
             //Aca debemos seguir agregando los scoped (de ser necesario)
             //**********
 
@@ -56,6 +71,19 @@ namespace Salvo
                 {
                     options.ExpireTimeSpan = TimeSpan.FromMinutes(10);
                     options.LoginPath = new PathString("/index.html");
+                })
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = Configuration["Jwt:Issuer"],
+                        ValidAudience = Configuration["Jwt:Issuer"],
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"]))
+                    };
                 });
 
             //Autorizacion
@@ -63,7 +91,7 @@ namespace Salvo
             {
                 options.AddPolicy("PlayerOnly", policy => policy.RequireClaim("Player"));
             });
-            
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

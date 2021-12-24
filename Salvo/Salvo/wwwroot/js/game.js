@@ -4,7 +4,11 @@
         games: [],
         scores: [],
         email: "",
+        name: "",
         password: "",
+        newpassword: "",
+        confirmpassword: "",
+        emailForPass: "",
         modal: {
             tittle: "",
             message: ""
@@ -13,6 +17,12 @@
     },
     mounted() {
         this.getGames();
+        if(getQueryVariable('modal') === 'confirmemail') {
+            this.confirmEmail();   
+        }
+        else if (getQueryVariable('modal') === 'resetpassword') {
+            $("#resetpassword").modal('show');
+        }
     },
     methods: {
         joinGame(gId) {
@@ -96,7 +106,8 @@
                     console.log("error, código de estatus: " + error.response.status);
                     if (error.response.status == 401) {
                         this.modal.tittle = "Falló la autenticación";
-                        this.modal.message = "Email o contraseña inválido"
+                        //this.modal.message = "Email o contraseña inválido"
+                        this.modal.message = error.response.data.message;
                         this.showModal(true);
                     }
                     else {
@@ -108,10 +119,13 @@
         },
         signin: function (event) {
             axios.post('/api/players', {
-                email: this.email, password: this.password
+                email: this.email, name: this.name, password: this.password
             })
                 .then(result => {
                     if (result.status == 201) {
+                        this.modal.tittle = "Registro Existoso";
+                        this.modal.message = "Debes validar tu email";
+                        this.showModal(true);
                         this.login();
                     }
                 })
@@ -127,6 +141,80 @@
                         this.modal.message = "Ha ocurrido un error";
                         this.showModal(true);
                     }
+                });
+        },
+        forgetPassword: function (event) {
+            axios.get('/api/auth/forgetpassword' + '?email=' + this.emailForPass)
+                .then(result => {
+                    if (result.status == 200) {
+                        $("#forgetpassword").modal("hide");
+                        this.modal.tittle = "Recuperar contraseña";
+                        this.modal.message = "Dirígase a su dirección de correo electrónico";
+                        this.showModal(true);
+                    }
+                })
+                .catch(error => {
+                    console.log("error, código de estatus: " + error.response.status);
+                    if (error.response.status == 401) {
+                        this.modal.tittle = "Recuperar contraseña";
+                        this.modal.message = error.response.data.message;
+                        this.showModal(true);
+                    }
+                    else {
+                        this.modal.tittle = "Recuperar contraseña";
+                        this.modal.message = "Ha ocurrido un error. Inténtelo de nuevo mas tarde";
+                        this.showModal(true);
+                    }
+                });
+        },
+        resetPassword: function (event) {
+            var email = getQueryVariable('email');
+            var token = getQueryVariable('token');
+            axios.post('/api/auth/resetpassword', {
+                token: token, email: email, newpassword: this.newpassword, confirmpassword: this.confirmpassword
+            })
+                .then(result => {
+                    if (result.status == 200) {
+                        $("#resetpassword").modal("hide");
+                        this.modal.tittle = "Recuperar contraseña";
+                        this.modal.message = "La contraseña se ha actualizado correctamente. Inicie sesion.";
+                        this.showModal(true);
+                    }
+                })
+                .catch(error => {
+                    console.log("error, código de estatus: " + error.response.status);
+                    if (error.response.status == 400) {
+                        this.modal.tittle = "Recuperar contraseña";
+                        this.modal.message = error.response.data.message;
+                        this.showModal(true);
+                    }
+                    else {
+                        this.modal.tittle = "Recuperar contraseña";
+                        this.modal.message = "Ha ocurrido un error. No se pudo actualizar la contraseña";
+                        this.showModal(true);
+                    }
+                });
+        },
+        confirmEmail: function () {
+            axios.get('/api/auth/confirmemail' + "?userid=" + getQueryVariable('userid') + "&token=" + getQueryVariable('token'))
+                .then(response => {
+                    this.modal.tittle = "Confirmar email";
+                    this.modal.message = "Tu email ha sido confirmado";
+                    this.showModal(true);
+                })
+                .catch(error => {
+                    console.log("error, código de estatus: " + error.response.status);
+                    if (error.response.status == 401) {
+                        this.modal.tittle = "Confirmar email";
+                        this.modal.message = error.response.data.message;
+                        this.showModal(true);
+                    }
+                    else {
+                        this.modal.tittle = "Confirmar email";
+                        this.modal.message = "Ha ocurrido un error. No se pudo confirmar el mail, inténtelo de nuevo mas tarde.";
+                        this.showModal(true);
+                    }
+                    
                 });
         },
         getScores: function (games) {
@@ -176,3 +264,14 @@
     }
 })
 
+function getQueryVariable(variable) {
+    var query = window.location.search.substring(1);
+    var vars = query.split("&");
+    for (let i = 0; i < vars.length; i++) {
+        let pair = vars[i].split("=");
+        if (pair[0].toUpperCase() == variable.toUpperCase()) {
+            return pair[1];
+        }
+    }
+    return null;
+}

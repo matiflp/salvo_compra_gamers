@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Salvo.Models;
+using Salvo.Models.Auth;
 using Salvo.Repositories;
+using Salvo.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,14 +19,17 @@ namespace Salvo.Controllers
     public class PlayersController : ControllerBase
     {
         private IPlayerRepository _repository;
-        public PlayersController(IPlayerRepository repository)
+        private IUserService _userService;
+
+        public PlayersController(IPlayerRepository repository, IUserService userService)
         {
             _repository = repository;
+            _userService = userService;
         }
 
         // POST api/<PlayersController>
         [HttpPost]
-        public IActionResult Post([FromBody] PlayerDTO player)
+        public async Task<IActionResult> Post([FromBody] PlayerDTO player)
         {
             try
             {
@@ -47,11 +53,11 @@ namespace Salvo.Controllers
                     return StatusCode(403, "El email ingresado no es válido");
 
                 // De ser válido obtenemos el mail y verificamos que no este en uso
-                Player dbPlayer = _repository.FindByEmail(player.Email);
+                var dbPlayer = _repository.FindByEmail(player.Email);
                 if (dbPlayer != null)
                     return StatusCode(403, "Email está en uso");
 
-                Player newPlayer = new Player
+                Player newPlayer = new()
                 {
                     Email = player.Email,
                     Password = player.Password,
@@ -59,8 +65,20 @@ namespace Salvo.Controllers
                 };
                 
                 _repository.Save(newPlayer);
-                // Retornamos el nuevo jugador
-                return StatusCode(201, newPlayer);
+
+                var result = await _userService.RegisterUserAsync(new RegisterModel 
+                {
+                    Email = player.Email,
+                    Password = player.Password,
+                    Name = player.Name
+                });
+
+                if (result.IsSuccess)
+                    // Retornamos el nuevo jugador
+                    return StatusCode(201, newPlayer); // Status Code: 200 
+
+                return BadRequest(result);
+                
             }
             catch (Exception ex)
             {

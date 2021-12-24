@@ -9,6 +9,7 @@ namespace Salvo.Repositories
     public interface IPlayerRepository
     {
         public Player FindByEmail(string email);
-        public void Save(Player player);
+        public Player FindById(long id);
+        public string Save(Player player);
     }
 }
